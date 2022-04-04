@@ -30,7 +30,7 @@ lables=[]
 with open("models/mobilenet_labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
-for img_path in ["images/224x224/mug.jpg", "images/224x224/paper_cup.jpg", "images/224x224/can.jpg", "images/room.jpg", "images/239x215/cat.jpg", "images/128x128/example.jpg", "images/128x128/mug.jpg"]:
+for img_path in ["images/224x224/mug.jpg", "images/224x224/paper_cup.jpg", "images/224x224/can.jpg", "images/room.jpg", "images/239x215/cat.jpg", "images/128x128/example.jpg", "images/128x128/mug.jpg", "images/room.jpg"]:
   print(f"=== {img_path} ===")
   img = Image.open(f"{img_path}").convert('RGB').resize((width, height))
 
@@ -41,7 +41,6 @@ for img_path in ["images/224x224/mug.jpg", "images/224x224/paper_cup.jpg", "imag
   print("# Interpreter:")
   print("  * starting")
   interpreter.set_tensor(inputs[0]["index"], input_data)
-#   interpreter.set_tensor(inputs[0]["index"], input_data.astype(np.float32))
 
   start_time = time.time()
   interpreter.invoke()
