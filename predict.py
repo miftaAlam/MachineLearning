@@ -10,8 +10,9 @@ argparser.add_argument("--model", metavar="M", type=int, help="the index of the 
 argparser.add_argument("--source", metavar="S", type=int, help="the index of the source to use.")
 args = argparser.parse_args()
 
-models = [("MobileNet V1 224","models/mobilenet_v1_1.0_224_quant/mobilenet_v1_1.0_224_quant.tflite"),
-          ("MobileNet V1 128","models/mobilenet_v1_0.25_128_quant/mobilenet_v1_0.25_128_quant.tflite")
+models = [("MobileNet V1 224","models/mobilenet_v1_1.0_224_quant"),
+          ("MobileNet V1 128","models/mobilenet_v1_0.25_128_quant"),
+          ("Custom: Is the camera covered?", "models/covered_quant")
          ]
 
 sources = [("Example Images",["images/224x224/*",
@@ -39,7 +40,7 @@ if args.source is None:
 else:
   src_i = args.source
 
-interpreter = tflite.Interpreter(models[model_i][1])
+interpreter = tflite.Interpreter(models[model_i][1]+"/model.tflite")
 interpreter.allocate_tensors()
 
 inputs = interpreter.get_input_details()[0];
@@ -48,11 +49,10 @@ width  = inputs["shape"][2]
 height = inputs["shape"][1]
 dtype = inputs["dtype"]
 scale, zero = outputs['quantization']
-
 print(f"Predicting with model:  {models[model_i][0]} ({width}x{height}) {dtype}")
 
 lables=[]
-with open("models/mobilenet_labels.txt", "r") as f:
+with open(models[model_i][1]+"/labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
 print(f"Predicting from source: {sources[src_i][0]}")
