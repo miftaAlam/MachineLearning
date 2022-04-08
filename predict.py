@@ -1,9 +1,20 @@
 import argparse
+import subprocess
 import tflite_runtime.interpreter as tflite
 import numpy as np
 from PIL import Image
 import time
 import glob
+
+def feed(lst_globs):
+  if lst_globs == "":
+    while True:
+      subprocess.run(["libcamera-jpeg", "-o","images/camera-feed.jpg"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+      yield "images/camera-feed.jpg"
+  else:
+    for img_glob in sources[src_i][1]:
+      for img_path in glob.glob(img_glob):
+        yield img_path
 
 argparser = argparse.ArgumentParser(description="Run a Model on a set of images or a camera feed and generate predictions.")
 argparser.add_argument("--model", metavar="M", type=int, help="the index of the model to use.")
@@ -57,22 +68,21 @@ with open(models[model_i][1]+"/labels.txt", "r") as f:
 
 print(f"Predicting from source: {sources[src_i][0]}")
 
-for img_glob in sources[src_i][1]:
-  for img_path in glob.glob(img_glob):
-    img = Image.open(img_path).convert('RGB').resize((width, height))
+for img_path in feed(sources[src_i][1]):
+  img = Image.open(img_path).convert('RGB').resize((width, height))
 
-    # we need another dimension
-    input_data = np.expand_dims(img, axis=0)
+  # we need another dimension
+  input_data = np.expand_dims(img, axis=0)
 
-    # lets get to it
-    interpreter.set_tensor(inputs["index"], input_data)
+  # lets get to it
+  interpreter.set_tensor(inputs["index"], input_data)
 
-    interpreter.invoke()
+  interpreter.invoke()
 
-    output_data = interpreter.get_tensor(outputs["index"]).squeeze()
-    
-    output_data = (scale*100) * (output_data - zero)
+  output_data = interpreter.get_tensor(outputs["index"]).squeeze()
+  
+  output_data = (scale*100) * (output_data - zero)
 
-    ordered_indexes = np.flip(output_data.argsort())
-    best_index = ordered_indexes[0]
-    print(f"  * {img_path} = {labels[best_index]} %0.0f%%" % output_data[best_index])
+  ordered_indexes = np.flip(output_data.argsort())
+  best_index = ordered_indexes[0]
+  print(f"  * {img_path} = {labels[best_index]} %0.0f%%" % output_data[best_index])
