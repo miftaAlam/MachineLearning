@@ -5,11 +5,16 @@ import numpy as np
 from PIL import Image
 import time
 import glob
+import picamera
+
+cam = picamera.PiCamera()
+cam.resolution = (224,224)
+cam.rotation = 180
 
 def feed(lst_globs):
   if lst_globs == "":
     while True:
-      subprocess.run(["libcamera-jpeg", "-o","images/camera-feed.jpg"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+      cam.capture("images/camera-feed.jpg")
       yield "images/camera-feed.jpg"
   else:
     for img_glob in sources[src_i][1]:
