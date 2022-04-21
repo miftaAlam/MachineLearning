@@ -28,6 +28,7 @@ args = argparser.parse_args()
 
 models = [("MobileNet V1 224","models/mobilenet_v1_1.0_224_quant"),
           ("MobileNet V1 128","models/mobilenet_v1_0.25_128_quant"),
+          ("Inception V4", "models/inception_v4_quant"),
           ("Custom: Is the camera covered?", "models/covered_quant")
          ]
 
@@ -65,7 +66,7 @@ width  = inputs["shape"][2]
 height = inputs["shape"][1]
 dtype = inputs["dtype"]
 scale, zero = outputs['quantization']
-print(f"Predicting with model:  {models[model_i][0]} ({width}x{height}) {dtype}")
+print(f"Predicting with model:  {models[model_i][0]}\n  * size: ({width}x{height})\n  * type: {dtype}\n  * scale: ({scale},{zero})")
 
 lables=[]
 with open(models[model_i][1]+"/labels.txt", "r") as f:
