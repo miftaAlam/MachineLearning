@@ -7,9 +7,13 @@ import time
 import glob
 import picamera
 
-cam = picamera.PiCamera()
-cam.resolution = (224,224)
-cam.rotation = 180
+try:
+  cam = picamera.PiCamera()
+  cam.resolution = (224,224)
+  cam.rotation = 180
+except:
+  print("no camera detected")
+  cam = None
 
 def feed(lst_globs):
   if lst_globs == "":
