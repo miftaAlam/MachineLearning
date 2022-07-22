@@ -19,3 +19,5 @@ run the following commands on first boot
   * `> python -m pip install Pillow`
   * `> python -m pip install picamera`
   * enable legacy camera support
+
+install [pi-clone](https://github.com/billw2/rpi-clone)
