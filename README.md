@@ -1,6 +1,15 @@
 I am having to resort to using a slow still capture since I don't have the python bindings for libcamera.  Try to find a better way.  To be honest though, it is kind-of OK for just playing with.
 
 # Setting up the PI for this code
+
+add the following lines to `/boot/config.txt`
+
+~~~~~
+enable_uart=1
+dtoverlay=disable-bt
+~~~~~
+
+run the following commands on first boot
   * `> sudo install git`
   * `> git clone <repo>`
   * `> sudo apt-get install python3-pip`
