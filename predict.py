@@ -6,6 +6,7 @@ from PIL import Image
 import time
 import glob
 import picamera
+from sense_hat import SenseHat
 
 try:
   cam = picamera.PiCamera()
@@ -45,6 +46,9 @@ sources = [("Example Images",["images/224x224/*",
            ("Camera","")
           ]
 
+hat = SenseHat()
+hat.show_letter("?", [255,255,255],[0,0,0])
+
 if args.model is None:
   print("Which model would you like to run?")
   for i, mod in enumerate(models):
@@ -60,6 +64,8 @@ if args.source is None:
   src_i = int(input())
 else:
   src_i = args.source
+
+hat.show_letter(str(model_i), [255,255,255], [0,0,0])
 
 interpreter = tflite.Interpreter(models[model_i][1]+"/model.tflite")
 interpreter.allocate_tensors()
@@ -77,6 +83,8 @@ with open(models[model_i][1]+"/labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
 print(f"Predicting from source: {sources[src_i][0]}")
+
+hat.clear()
 
 for img_path in feed(sources[src_i][1]):
   img = Image.open(img_path).convert('RGB').resize((width, height))
