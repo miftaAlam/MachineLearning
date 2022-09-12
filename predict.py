@@ -1,4 +1,3 @@
-#TODO: floating point models are working, but very badly!  I must be making an effor in how I set them up.
 import argparse
 import subprocess
 import tflite_runtime.interpreter as tflite
@@ -103,7 +102,10 @@ for img_path in feed(sources[src_i][1]):
   img = Image.open(img_path).convert('RGB').resize((width, height))
   
   # we need another dimension
-  input_data = np.expand_dims(img, axis=0).astype(dtype)
+  input_data = np.expand_dims(img, axis=0)
+  # TODO: hard coding the std for float32 models - but seems to work for now
+  if (dtype == np.float32):
+      input_data = np.float32(input_data)/255
 
   # lets get to it
   interpreter.set_tensor(inputs["index"], input_data)
