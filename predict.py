@@ -1,3 +1,4 @@
+#TODO: floating point models are working, but very badly!  I must be making an effor in how I set them up.
 import argparse
 import subprocess
 import tflite_runtime.interpreter as tflite
@@ -6,6 +7,7 @@ from PIL import Image
 import time
 import glob
 import picamera
+import utils
 from sense_hat import SenseHat
 
 try:
@@ -33,8 +35,12 @@ args = argparser.parse_args()
 
 models = [("MobileNet V1 224","models/mobilenet_v1_1.0_224_quant"),
           ("MobileNet V1 128","models/mobilenet_v1_0.25_128_quant"),
+          ("MobileNet V3 224 float", "models/mobilenet_v3_224_float"),
           ("Inception V4", "models/inception_v4_quant"),
-          ("Custom: Is the camera covered?", "models/covered_quant")
+          ("Custom: Is the camera covered (quant)?", "models/covered_quant"),
+          ("Custom: Is the camera covered (float)?", "models/covered_float"),
+          ("Custom: Stage 5 demo", "models/stage_5_demo_224_float"),
+          ("Custom: Stage 5 demo quantised", "models/stage_5_demo_224_quant")
          ]
 
 sources = [("Example Images",["images/224x224/*",
@@ -82,15 +88,22 @@ lables=[]
 with open(models[model_i][1]+"/labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
+icons=[]
+try:
+    with open(models[model_i][1]+"/icons.txt", "r") as f:
+        icons = [line.strip() for line in f.readlines()]
+except:
+    print("no icon file found")
+
 print(f"Predicting from source: {sources[src_i][0]}")
 
 hat.clear()
 
 for img_path in feed(sources[src_i][1]):
   img = Image.open(img_path).convert('RGB').resize((width, height))
-
+  
   # we need another dimension
-  input_data = np.expand_dims(img, axis=0)
+  input_data = np.expand_dims(img, axis=0).astype(dtype)
 
   # lets get to it
   interpreter.set_tensor(inputs["index"], input_data)
@@ -98,9 +111,16 @@ for img_path in feed(sources[src_i][1]):
   interpreter.invoke()
 
   output_data = interpreter.get_tensor(outputs["index"]).squeeze()
-  
-  output_data = (scale*100) * (output_data - zero)
+  if (scale > 0): # TODO: this line scales and converts to percentage, so we need an else.  Might be better to do percentage in the display line
+      output_data = (scale*100) * (output_data - zero)
+  else:
+      output_data = 100 * output_data
 
   ordered_indexes = np.flip(output_data.argsort())
   best_index = ordered_indexes[0]
+  if (len(icons) > best_index):
+      func = "hat.set_pixels(utils." + icons[best_index]+"([0,100,0]))"
+      eval(func)
+  else:
+      hat.set_pixels(utils.pixels_of_num(best_index))
   print(f"  * {img_path} = {labels[best_index]} %0.0f%%" % output_data[best_index])
