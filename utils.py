@@ -34,6 +34,18 @@ def question_mark(c):
         o,o,o,o,c,o,o,o
         ]
 
+def unknown(c):
+    return [
+        o,o,o,o,o,o,o,o,
+        o,o,o,o,o,o,o,o,
+        o,o,c,c,c,c,o,o,
+        o,o,o,o,o,c,o,o,
+        o,o,o,o,c,o,o,o,
+        o,o,o,o,c,o,o,o,
+        o,o,o,o,o,o,o,o,
+        o,o,o,o,c,o,o,o
+        ]
+
 def cee(c):
     return [
         o,w,o,o,o,o,w,o,
@@ -152,5 +164,42 @@ def phone(c):
         o,o,o,c,c,c,c,o,
         o,o,o,o,c,c,o,o,
         o,o,o,o,o,o,o,o
+        ]
+
+def stream(c):
+    return [
+        o,w,o,o,o,o,w,o,
+        w,w,w,w,w,w,w,w,
+        o,w,o,o,c,o,w,o,
+        c,c,c,o,o,c,o,o,
+        o,o,o,c,o,o,c,o,
+        c,c,o,o,c,o,c,o,
+        o,o,c,o,c,o,c,o,
+        c,o,c,o,c,o,c,o
+        ]
+
+
+def boat(c):
+    return [
+        o,w,o,c,o,o,w,o,
+        w,w,w,w,w,w,w,w,
+        o,w,o,c,c,c,w,o,
+        o,o,o,c,c,c,c,o,
+        o,o,o,c,c,c,c,c,
+        c,c,c,c,c,c,c,c,
+        o,c,c,c,c,c,c,o,
+        o,o,c,c,c,c,o,o
+        ]
+
+def boat_act(c):
+    return [
+        o,o,o,c,o,o,o,o,
+        o,o,o,c,c,o,o,o,
+        o,o,o,c,c,c,o,o,
+        o,o,o,c,c,c,c,o,
+        o,o,o,c,c,c,c,c,
+        c,c,c,c,c,c,c,c,
+        o,c,c,c,c,c,c,o,
+        o,o,c,c,c,c,o,o
         ]
 
