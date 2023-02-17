@@ -7,6 +7,7 @@ import time
 import glob
 import picamera
 import utils
+import shutil
 from sense_hat import SenseHat
 
 try:
@@ -39,7 +40,8 @@ models = [("MobileNet V1 224","models/mobilenet_v1_1.0_224_quant"),
           ("Custom: Is the camera covered (quant)?", "models/covered_quant"),
           ("Custom: Is the camera covered (float)?", "models/covered_float"),
           ("Custom: Stage 5 demo", "models/stage_5_demo_224_float"),
-          ("Custom: Stage 5 demo quantised", "models/stage_5_demo_224_quant")
+          ("Custom: Stage 5 demo quantised", "models/stage_5_demo_224_quant"),
+          ("Custom: Our Cool Model", "models/our cool model")
          ]
 
 sources = [("Example Images",["images/224x224/*",
@@ -52,7 +54,7 @@ sources = [("Example Images",["images/224x224/*",
           ]
 
 hat = SenseHat()
-hat.show_letter("?", [255,255,255],[0,0,0])
+hat.show_letter("?", [255,0,0],[0,0,0])
 
 if args.model is None:
   print("Which model would you like to run?")
@@ -70,7 +72,7 @@ if args.source is None:
 else:
   src_i = args.source
 
-hat.show_letter(str(model_i), [255,255,255], [0,0,0])
+hat.show_letter(str(model_i), [0, 255, 0], [0,0,0])
 
 interpreter = tflite.Interpreter(models[model_i][1]+"/model.tflite")
 interpreter.allocate_tensors()
@@ -98,7 +100,9 @@ print(f"Predicting from source: {sources[src_i][0]}")
 
 hat.clear()
 
+num = 0
 for img_path in feed(sources[src_i][1]):
+  num = num + 1
   img = Image.open(img_path).convert('RGB').resize((width, height))
   
   # we need another dimension
@@ -120,9 +124,20 @@ for img_path in feed(sources[src_i][1]):
 
   ordered_indexes = np.flip(output_data.argsort())
   best_index = ordered_indexes[0]
-  if (len(icons) > best_index):
-      func = "hat.set_pixels(utils." + icons[best_index]+"([0,100,0]))"
+ 
+  if (best_index == 0):
+      func = "hat.set_pixels(utils.no_glasses(1))"
       eval(func)
-  else:
-      hat.set_pixels(utils.pixels_of_num(best_index))
+  if (best_index == 1):
+      func = "hat.set_pixels(utils.glasses(1))"
+      eval(func)
+  if (best_index == 2):
+      func = "hat.set_pixels(utils.no_person_detected(1))"
+      eval(func)
+
   print(f"  * {img_path} = {labels[best_index]} %0.0f%%" % output_data[best_index])
+
+  # also save for checking
+  shutil.copy(img_path, f"results/{labels[best_index]}/{num}.jpg")
+
+
