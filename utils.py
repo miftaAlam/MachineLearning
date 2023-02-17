@@ -22,6 +22,43 @@ r = [100,0,0]
 b = [0,0,100]
 s = [80,80,80]
 
+def glasses(c):
+    return [
+    o,o,o,o,o,o,o,o,
+    o,o,o,o,o,o,o,o,
+    o,o,b,o,o,b,o,o,
+    b,b,b,b,b,b,b,b,
+    o,b,b,b,b,b,b,o,
+    o,o,b,o,o,b,o,o,
+    o,o,o,o,o,o,o,o,
+    o,o,o,o,o,o,o,o,
+   ]
+
+def no_glasses(c):
+    return [
+    o,o,o,o,o,o,o,o,
+    o,r,o,o,o,o,r,o,
+    o,o,r,o,o,r,o,o,
+    b,b,b,r,r,b,b,b,
+    o,b,b,r,r,b,b,o,
+    o,o,r,o,o,r,o,o,
+    o,r,o,o,o,o,r,o,
+    o,o,o,o,o,o,o,o,
+    ]
+
+def no_person_detected(c):
+    return [
+    o,o,o,o,o,o,o,o,
+    o,r,o,o,o,o,r,o,
+    o,o,r,o,o,r,o,o,
+    o,o,o,r,r,o,o,o,
+    o,o,o,r,r,o,o,o,
+    o,o,r,o,o,r,o,o,
+    o,r,o,o,o,o,r,o,
+    o,o,o,o,o,o,o,o,
+    ]
+
+
 def question_mark(c):
     return [
         o,w,o,o,o,o,w,o,
